@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Bell — A Course in Reading the Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F0EFE4;
+    --bg-alt: #E5E2D2;
+    --card: #FAF9F1;
+    --ink: #202B23;
+    --ink-soft: #57624F;
+    --bull: #1F6E43;
+    --bull-soft: #DCE9DE;
+    --bear: #A5402E;
+    --bear-soft: #EEDBD3;
+    --line: #C9C4A9;
+    --mark: #9C7A21;
+    --radius: 3px;
+    --wrap: 1080px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    margin:0;
+    color:var(--ink);
+  }
+
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  a{ color:inherit; }
+  ::selection{ background:var(--mark); color:var(--card); }
+
+  a:focus-visible, button:focus-visible, .tab:focus-visible{
+    outline:2px solid var(--mark);
+    outline-offset:3px;
+  }
+
+  /* ---------- TICKER ---------- */
+  .ticker-bar{
+    background:var(--ink);
+    color:var(--bg);
+    overflow:hidden;
+    white-space:nowrap;
+    border-bottom:1px solid var(--line);
+  }
+  .ticker-track{
+    display:inline-flex;
+    animation: scroll-left 38s linear infinite;
+    padding:9px 0;
+  }
+  @keyframes scroll-left{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+  .tick{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.02em;
+    padding:0 22px;
+    display:inline-flex;
+    gap:8px;
+    border-right:1px solid #3c463c;
+  }
+  .tick .up{ color:#8FD4A8; }
+  .tick .down{ color:#E7A392; }
+
+  /* ---------- NAV ---------- */
+  .site-nav{
+    position:sticky; top:0; z-index:50;
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:var(--wrap);
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 24px;
+    gap:20px;
+  }
+  .brand{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:19px;
+    letter-spacing:0.01em;
+    white-space:nowrap;
+  }
+  .brand .bell{ color:var(--bull); }
+  .nav-links{
+    display:flex;
+    gap:2px;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .nav-links::-webkit-scrollbar{ display:none; }
+  .nav-links a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    text-decoration:none;
+    color:var(--ink-soft);
+    padding:8px 12px;
+    white-space:nowrap;
+    border-bottom:2px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-links a.active{ color:var(--ink); border-color:var(--bull); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    max-width:var(--wrap);
+    margin:0 auto;
+    padding:88px 24px 64px;
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap:48px;
+    align-items:center;
+  }
+  .hero-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--mark);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .hero-eyebrow::before{
+    content:"";
+    width:8px; height:8px;
+    background:var(--bull);
+    border-radius:50%;
+    display:inline-block;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 5vw, 3.6rem);
+    line-height:1.05;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--bull);
+  }
+  .hero p.lede{
+    margin-top:20px;
+    font-size:17px;
+    color:var(--ink-soft);
+    max-width:46ch;
+  }
+  .hero-actions{ margin-top:30px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    text-decoration:none;
+    padding:12px 20px;
+    border-radius:var(--radius);
+    border:1px solid var(--ink);
+    display:inline-block;
+  }
+  .btn-primary{ background:var(--ink); color:var(--bg); }
+  .btn-ghost{ background:transparent; color:var(--ink); }
+
+  /* Hero candle illustration */
+  .hero-chart{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 20px 14px;
+    position:relative;
+  }
+  .hero-chart-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .hero-row{
+    display:flex;
+    align-items:flex-end;
+    gap:9px;
+    height:190px;
+    border-bottom:1px dashed var(--line);
+  }
+
+  /* ---------- CANDLE COMPONENT ---------- */
+  .candle-stack{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:26px;
+  }
+  .wick{
+    width:2px;
+    background:var(--ink-soft);
+  }
+  .body{
+    width:20px;
+    border-radius:1px;
+  }
+  .body.bull{ background:var(--bull); }
+  .body.bear{ background:var(--bear); }
+
+  /* ---------- SECTIONS ---------- */
+  section.module{
+    max-width:var(--wrap);
+    margin:0 auto;
+    padding:80px 24px;
+    border-top:1px solid var(--line);
+  }
+  .module-head{
+    display:flex;
+    gap:20px;
+    align-items:baseline;
+    margin-bottom:44px;
+  }
+  .module-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--mark);
+    border:1px solid var(--mark);
+    padding:3px 8px;
+    border-radius:var(--radius);
+  }
+  .module-head h2{
+    font-size:clamp(1.7rem, 3vw, 2.3rem);
+  }
+  .module-sub{
+    color:var(--ink-soft);
+    font-size:15px;
+    max-width:62ch;
+    margin:14px 0 0;
+  }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px;
+  }
+  .card h3{ font-size:18px; margin-bottom:10px; }
+  .card p{ color:var(--ink-soft); font-size:14.5px; margin:0; }
+  .card .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--mark);
+    display:block;
+    margin-bottom:8px;
+  }
+
+  .ledger-list{ list-style:none; margin:0; padding:0; }
+  .ledger-list li{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:18px;
+    padding:16px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .ledger-list li:first-child{ border-top:1px solid var(--line); }
+  .ledger-list dt{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--ink);
+    font-weight:700;
+  }
+  .ledger-list dd{ margin:0; color:var(--ink-soft); font-size:14.5px; }
+
+  /* order book demo */
+  .order-book{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+  }
+  .order-book .col-head{
+    background:var(--ink);
+    color:var(--bg);
+    padding:10px 14px;
+    font-size:11px;
+    letter-spacing:0.06em;
+  }
+  .order-book .row{
+    background:var(--card);
+    padding:8px 14px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .order-book .bid{ color:var(--bull); }
+  .order-book .ask{ color:var(--bear); }
+
+  /* ---------- PATTERN GALLERY ---------- */
+  .pattern-tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .tab{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    padding:9px 16px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .tab.active{
+    background:var(--ink);
+    color:var(--bg);
+    border-color:var(--ink);
+  }
+  .pattern-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+  }
+  .pattern-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+  }
+  .pattern-card[hidden]{ display:none; }
+  .pattern-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:16px;
+  }
+  .pattern-name{ font-size:16.5px; font-family:'Fraunces',serif; font-weight:600;}
+  .pattern-bias{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:3px 9px;
+    border-radius:12px;
+  }
+  .pattern-bias.bullish{ background:var(--bull-soft); color:var(--bull); }
+  .pattern-bias.bearish{ background:var(--bear-soft); color:var(--bear); }
+  .pattern-bias.neutral{ background:var(--bg-alt); color:var(--ink-soft); }
+
+  .pattern-canvas{
+    height:120px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    gap:16px;
+    border-bottom:1px dashed var(--line);
+    margin-bottom:14px;
+    padding-top:6px;
+  }
+  .pattern-card p{ margin:0; color:var(--ink-soft); font-size:14px; }
+
+  /* ---------- STRATEGY ---------- */
+  .strat-list{ display:flex; flex-direction:column; gap:0; }
+  .strat{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:28px;
+    padding:26px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .strat:first-child{ border-top:1px solid var(--line); }
+  .strat h4{ font-size:17px; }
+  .strat .strat-meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--mark);
+    display:block;
+    margin-top:6px;
+  }
+  .strat p{ margin:8px 0 0; color:var(--ink-soft); font-size:14.5px; }
+
+  .risk-box{
+    margin-top:44px;
+    background:var(--bg-alt);
+    border:1px solid var(--line);
+    border-left:4px solid var(--bear);
+    border-radius:var(--radius);
+    padding:22px 24px;
+  }
+  .risk-box .tag{ color:var(--bear); }
+
+  /* ---------- QUIZ ---------- */
+  .quiz-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+    margin-bottom:18px;
+  }
+  .quiz-q{ font-size:15.5px; margin-bottom:14px; font-weight:500; }
+  .quiz-opts{ display:flex; gap:10px; flex-wrap:wrap; }
+  .quiz-opt{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    padding:9px 15px;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    background:var(--bg);
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .quiz-opt.correct{ background:var(--bull-soft); border-color:var(--bull); color:var(--bull); }
+  .quiz-opt.incorrect{ background:var(--bear-soft); border-color:var(--bear); color:var(--bear); }
+  .quiz-feedback{
+    margin-top:12px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    display:none;
+  }
+  .quiz-feedback.show{ display:block; }
+  .quiz-score{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--ink);
+    color:var(--bg-alt);
+    padding:52px 24px 34px;
+  }
+  .footer-inner{
+    max-width:var(--wrap);
+    margin:0 auto;
+  }
+  .footer-inner h3{ color:var(--bg); font-size:18px; margin-bottom:12px;}
+  .disclaimer{
+    font-size:13px;
+    line-height:1.7;
+    color:#B7BEB2;
+    max-width:70ch;
+    border-top:1px solid #3c463c;
+    padding-top:20px;
+    margin-top:24px;
+  }
+
+  @media (max-width: 860px){
+    .hero{ grid-template-columns:1fr; padding-top:48px; }
+    .grid-2, .grid-3{ grid-template-columns:1fr; }
+    .pattern-grid{ grid-template-columns:1fr; }
+    .strat{ grid-template-columns:1fr; gap:6px; }
+    .ledger-list li{ grid-template-columns:1fr; gap:4px; }
+    .order-book{ font-size:12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker-bar" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="tick">AAPL <span class="up">▲ 214.32</span></span>
+    <span class="tick">TSLA <span class="down">▼ 187.05</span></span>
+    <span class="tick">MSFT <span class="up">▲ 441.90</span></span>
+    <span class="tick">NVDA <span class="up">▲ 128.77</span></span>
+    <span class="tick">AMZN <span class="down">▼ 198.14</span></span>
+    <span class="tick">SPY <span class="up">▲ 561.02</span></span>
+    <span class="tick">JPM <span class="up">▲ 233.61</span></span>
+    <span class="tick">DIS <span class="down">▼ 96.48</span></span>
+    <span class="tick">AAPL <span class="up">▲ 214.32</span></span>
+    <span class="tick">TSLA <span class="down">▼ 187.05</span></span>
+    <span class="tick">MSFT <span class="up">▲ 441.90</span></span>
+    <span class="tick">NVDA <span class="up">▲ 128.77</span></span>
+    <span class="tick">AMZN <span class="down">▼ 198.14</span></span>
+    <span class="tick">SPY <span class="up">▲ 561.02</span></span>
+    <span class="tick">JPM <span class="up">▲ 233.61</span></span>
+    <span class="tick">DIS <span class="down">▼ 96.48</span></span>
+  </div>
+</div>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="bell">●</span> Open Bell</div>
+    <div class="nav-links" id="navLinks">
+      <a href="#open" class="nav-link">01 The Open</a>
+      <a href="#order" class="nav-link">02 The Order</a>
+      <a href="#candle" class="nav-link">03 The Candle</a>
+      <a href="#strategy" class="nav-link">04 The Strategy</a>
+      <a href="#test" class="nav-link">05 Test Yourself</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div>
+    <div class="hero-eyebrow">Free Course · 5 Modules</div>
+    <h1>Learn to read the market<br>like a <em>ledger</em>, not a gamble.</h1>
+    <p class="lede">A plain-language course on how stocks work, how trades actually get filled, how to read a candlestick, and the strategies traders build on top of all three. No jargon left unexplained.</p>
+    <div class="hero-actions">
+      <a href="#open" class="btn btn-primary">Start Module 01</a>
+      <a href="#candle" class="btn btn-ghost">Jump to Candlesticks</a>
+    </div>
+  </div>
+  <div class="hero-chart">
+    <div class="hero-chart-label"><span>DEMO · NOT REAL DATA</span><span class="mono">1D</span></div>
+    <div class="hero-row" id="heroCandles"></div>
+  </div>
+</header>
+
+<!-- ================= MODULE 01 ================= -->
+<section class="module" id="open">
+  <div class="module-head">
+    <span class="module-num">01</span>
+    <div>
+      <h2>The Open — How Stocks Work</h2>
+      <p class="module-sub">Before you trade anything, it helps to know what you actually own and where the price you see is coming from.</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="tag">Ownership</span>
+      <h3>What a share actually is</h3>
+      <p>A share is a small legal slice of a company. Own one, and you own a fraction of its assets, earnings, and voting rights. A company sells shares to raise money without taking on debt — investors buy them expecting the company to grow in value or pay out profit as dividends.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Marketplace</span>
+      <h3>Where trades happen</h3>
+      <p>Exchanges like the NYSE or Nasdaq are matching engines — they connect a buyer's bid with a seller's ask. Your broker routes your order there electronically; the whole match usually happens in milliseconds.</p>
+    </div>
+  </div>
+
+  <dl class="ledger-list" style="margin-top:24px;">
+    <li>
+      <dt>Market Cap</dt>
+      <dd>Share price × total shares outstanding. It's the market's running estimate of what the whole company is worth — not the same as cash in the bank.</dd>
+    </li>
+    <li>
+      <dt>IPO</dt>
+      <dd>The Initial Public Offering — the first time a private company sells shares to the public and starts trading on an exchange.</dd>
+    </li>
+    <li>
+      <dt>Index</dt>
+      <dd>A basket of stocks tracked together, like the S&amp;P 500. Indices are used as a scoreboard for "the market" as a whole, and as a benchmark to compare your own returns against.</dd>
+    </li>
+    <li>
+      <dt>Bull / Bear</dt>
+      <dd>A bull market is a sustained period of rising prices and optimism. A bear market is the opposite — a sustained decline, usually 20%+ off recent highs, paired with pessimism.</dd>
+    </li>
+    <li>
+      <dt>Volatility</dt>
+      <dd>How much and how fast a price moves. High volatility means bigger swings in both directions — more opportunity, and more risk, in the same breath.</dd>
+    </li>
+  </dl>
+</section>
+
+<!-- ================= MODULE 02 ================= -->
+<section class="module" id="order">
+  <div class="module-head">
+    <span class="module-num">02</span>
+    <div>
+      <h2>The Order — How Trading Works</h2>
+      <p class="module-sub">Every trade is just two people disagreeing on price until they don't. Here's the mechanics of getting your order filled.</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="margin-bottom:14px; font-size:17px;">Order types</h3>
+      <div class="card" style="margin-bottom:14px;">
+        <span class="tag">Speed over price</span>
+        <h3>Market order</h3>
+        <p>Buy or sell immediately at the best available current price. You're guaranteed to get filled, not guaranteed the exact price.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Price over speed</span>
+        <h3>Limit order</h3>
+        <p>You set the exact price you're willing to buy or sell at. It only fills if the market reaches that price — you're guaranteed the price, not guaranteed a fill.</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:14px; font-size:17px;">A live order book (demo)</h3>
+      <div class="order-book">
+        <div class="col-head">BIDS (buyers)</div>
+        <div class="col-head">ASKS (sellers)</div>
+        <div class="row bid"><span>214.30</span><span>820</span></div>
+        <div class="row ask"><span>214.34</span><span>410</span></div>
+        <div class="row bid"><span>214.29</span><span>1,240</span></div>
+        <div class="row ask"><span>214.35</span><span>690</span></div>
+        <div class="row bid"><span>214.28</span><span>560</span></div>
+        <div class="row ask"><span>214.36</span><span>1,010</span></div>
+      </div>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin-top:12px;">The gap between the best bid (214.30) and best ask (214.34) is the <strong>spread</strong> — the market's built-in cost of trading right now.</p>
+    </div>
+  </div>
+
+  <dl class="ledger-list" style="margin-top:32px;">
+    <li>
+      <dt>Long position</dt>
+      <dd>Buying a stock expecting the price to rise, then selling later for a profit. The default, simplest position.</dd>
+    </li>
+    <li>
+      <dt>Short position</dt>
+      <dd>Borrowing shares to sell now, aiming to buy them back cheaper later. Profits if the price falls — but losses are theoretically unlimited, since a price has no ceiling.</dd>
+    </li>
+    <li>
+      <dt>Stop-loss</dt>
+      <dd>A standing order that automatically sells your position if the price drops to a level you set — a pre-committed exit that limits how much a single trade can cost you.</dd>
+    </li>
+    <li>
+      <dt>Position size</dt>
+      <dd>How much of your account you put into one trade. Risking a small, consistent slice per trade (many traders use 1–2%) is what keeps one bad trade from being a account-ending one.</dd>
+    </li>
+  </dl>
+</section>
+
+<!-- ================= MODULE 03 — CANDLES ================= -->
+<section class="module" id="candle">
+  <div class="module-head">
+    <span class="module-num">03</span>
+    <div>
+      <h2>The Candle — Reading Price Action</h2>
+      <p class="module-sub">A candlestick compresses four numbers — open, high, low, close — into one shape. Learn the shapes, and a chart starts reading like a sentence.</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:44px;">
+    <div class="card">
+      <span class="tag">Anatomy</span>
+      <h3>Body and wick</h3>
+      <p>The thick <strong>body</strong> spans the open and close for that period. The thin <strong>wick</strong> (or shadow) marks the high and low reached along the way. A green (or hollow) body means the close was above the open; a red (or filled) body means the close was below it.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Reading it</span>
+      <h3>One candle tells a mood</h3>
+      <p>A long body means conviction — one side dominated the period. A long wick with a small body means rejection — price tried to move that way and got pushed back. No wick at all means one side controlled the entire range.</p>
+    </div>
+  </div>
+
+  <div class="pattern-tabs" role="tablist" aria-label="Filter candlestick patterns">
+    <button class="tab active" data-filter="all">All patterns</button>
+    <button class="tab" data-filter="single">Single-candle</button>
+    <button class="tab" data-filter="multi">Multi-candle</button>
+  </div>
+
+  <div class="pattern-grid" id="patternGrid">
+
+    <div class="pattern-card" data-type="single">
+      <div class="pattern-top">
+        <span class="pattern-name">Doji</span>
+        <span class="pattern-bias neutral">Indecision</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack">
+          <div class="wick" style="height:38px;"></div>
+          <div class="body bull" style="height:3px;"></div>
+          <div class="wick" style="height:38px;"></div>
+        </div>
+      </div>
+      <p>Open and close land almost at the same price. Long wicks on both sides show a real fight between buyers and sellers that ended in a draw — often a sign momentum is stalling.</p>
+    </div>
+
+    <div class="pattern-card" data-type="single">
+      <div class="pattern-top">
+        <span class="pattern-name">Hammer</span>
+        <span class="pattern-bias bullish">Bullish reversal</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack">
+          <div class="wick" style="height:4px;"></div>
+          <div class="body bull" style="height:20px;"></div>
+          <div class="wick" style="height:64px;"></div>
+        </div>
+      </div>
+      <p>Small body near the top, long lower wick, little to no upper wick. Sellers pushed price down hard, but buyers stepped in and dragged it back up before the close. Found at the bottom of a downtrend.</p>
+    </div>
+
+    <div class="pattern-card" data-type="single">
+      <div class="pattern-top">
+        <span class="pattern-name">Shooting Star</span>
+        <span class="pattern-bias bearish">Bearish reversal</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack" style="margin-top:6px;">
+          <div class="wick" style="height:64px;"></div>
+          <div class="body bear" style="height:20px;"></div>
+          <div class="wick" style="height:4px;"></div>
+        </div>
+      </div>
+      <p>The mirror image of a hammer: small body near the bottom, long upper wick. Buyers tried to push price up, sellers overpowered them by the close. Found at the top of an uptrend.</p>
+    </div>
+
+    <div class="pattern-card" data-type="single">
+      <div class="pattern-top">
+        <span class="pattern-name">Marubozu</span>
+        <span class="pattern-bias bullish">Strong conviction</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack">
+          <div class="wick" style="height:0px;"></div>
+          <div class="body bull" style="height:88px;"></div>
+          <div class="wick" style="height:0px;"></div>
+        </div>
+      </div>
+      <p>No wicks at all — the open was the low and the close was the high (or vice versa for a bearish marubozu). One side controlled the entire period, start to finish.</p>
+    </div>
+
+    <div class="pattern-card" data-type="multi">
+      <div class="pattern-top">
+        <span class="pattern-name">Bullish Engulfing</span>
+        <span class="pattern-bias bullish">Bullish reversal</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack" style="margin-top:20px;">
+          <div class="wick" style="height:4px;"></div>
+          <div class="body bear" style="height:34px;"></div>
+          <div class="wick" style="height:4px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:6px;">
+          <div class="wick" style="height:5px;"></div>
+          <div class="body bull" style="height:58px;"></div>
+          <div class="wick" style="height:5px;"></div>
+        </div>
+      </div>
+      <p>A small red candle is followed by a larger green candle whose body fully swallows the one before it. Buyers didn't just stop the decline — they erased it in a single period.</p>
+    </div>
+
+    <div class="pattern-card" data-type="multi">
+      <div class="pattern-top">
+        <span class="pattern-name">Bearish Engulfing</span>
+        <span class="pattern-bias bearish">Bearish reversal</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack" style="margin-top:6px;">
+          <div class="wick" style="height:4px;"></div>
+          <div class="body bull" style="height:34px;"></div>
+          <div class="wick" style="height:4px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:20px;">
+          <div class="wick" style="height:5px;"></div>
+          <div class="body bear" style="height:58px;"></div>
+          <div class="wick" style="height:5px;"></div>
+        </div>
+      </div>
+      <p>The opposite setup at the top of an uptrend: a small green candle, then a larger red one that fully engulfs it. Sellers take back control in one decisive move.</p>
+    </div>
+
+    <div class="pattern-card" data-type="multi">
+      <div class="pattern-top">
+        <span class="pattern-name">Morning Star</span>
+        <span class="pattern-bias bullish">Bullish reversal</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack" style="margin-top:14px;">
+          <div class="wick" style="height:3px;"></div>
+          <div class="body bear" style="height:58px;"></div>
+          <div class="wick" style="height:3px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:64px;">
+          <div class="wick" style="height:4px;"></div>
+          <div class="body bear" style="height:10px;"></div>
+          <div class="wick" style="height:4px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:8px;">
+          <div class="wick" style="height:3px;"></div>
+          <div class="body bull" style="height:56px;"></div>
+          <div class="wick" style="height:3px;"></div>
+        </div>
+      </div>
+      <p>Three candles: a long decline, a small indecisive candle that gaps lower, then a strong green candle that climbs back into the first candle's body. The "star" in the middle marks the turn.</p>
+    </div>
+
+    <div class="pattern-card" data-type="multi">
+      <div class="pattern-name" style="margin-bottom:0;"></div>
+      <div class="pattern-top">
+        <span class="pattern-name">Evening Star</span>
+        <span class="pattern-bias bearish">Bearish reversal</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack" style="margin-top:8px;">
+          <div class="wick" style="height:3px;"></div>
+          <div class="body bull" style="height:56px;"></div>
+          <div class="wick" style="height:3px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:0px;">
+          <div class="wick" style="height:4px;"></div>
+          <div class="body bear" style="height:10px;"></div>
+          <div class="wick" style="height:4px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:14px;">
+          <div class="wick" style="height:3px;"></div>
+          <div class="body bear" style="height:58px;"></div>
+          <div class="wick" style="height:3px;"></div>
+        </div>
+      </div>
+      <p>The mirror of a morning star: a strong rally, a small indecisive candle at the top, then a long red candle erasing much of the gain. Marks exhaustion at the top of a trend.</p>
+    </div>
+
+    <div class="pattern-card" data-type="multi">
+      <div class="pattern-top">
+        <span class="pattern-name">Three White Soldiers</span>
+        <span class="pattern-bias bullish">Bullish continuation</span>
+      </div>
+      <div class="pattern-canvas">
+        <div class="candle-stack" style="margin-top:44px;">
+          <div class="wick" style="height:3px;"></div>
+          <div class="body bull" style="height:34px;"></div>
+          <div class="wick" style="height:3px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:22px;">
+          <div class="wick" style="height:3px;"></div>
+          <div class="body bull" style="height:40px;"></div>
+          <div class="wick" style="height:3px;"></div>
+        </div>
+        <div class="candle-stack" style="margin-top:0px;">
+          <div class="wick" style="height:3px;"></div>
+          <div class="body bull" style="height:46px;"></div>
+          <div class="wick" style="height:3px;"></div>
+        </div>
+      </div>
+      <p>Three consecutive long green candles, each opening inside the previous body and closing higher, with small wicks throughout. Steady, sustained buying pressure — no single burst.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= MODULE 04 ================= -->
+<section class="module" id="strategy">
+  <div class="module-head">
+    <span class="module-num">04</span>
+    <div>
+      <h2>The Strategy — Putting It Together</h2>
+      <p class="module-sub">A strategy is just a rule set: what setup you look for, when you enter, and when you get out. Here are four common frameworks traders build on top of price action.</p>
+    </div>
+  </div>
+
+  <div class="strat-list">
+    <div class="strat">
+      <div>
+        <h4>Trend following</h4>
+        <span class="strat-meta">TOOLS: MOVING AVERAGES</span>
+      </div>
+      <p>Trade in the direction of the prevailing trend rather than against it — "the trend is your friend." A common trigger is a shorter moving average (e.g. 20-day) crossing above a longer one (e.g. 50-day), used as a signal that momentum has shifted.</p>
+    </div>
+    <div class="strat">
+      <div>
+        <h4>Breakout trading</h4>
+        <span class="strat-meta">TOOLS: SUPPORT / RESISTANCE</span>
+      </div>
+      <p>Watch a price that's been trapped between a floor (support) and a ceiling (resistance), and enter when it breaks convincingly through one of those levels, betting the move continues in that direction.</p>
+    </div>
+    <div class="strat">
+      <div>
+        <h4>Mean reversion</h4>
+        <span class="strat-meta">TOOLS: RSI, BOLLINGER BANDS</span>
+      </div>
+      <p>Based on the idea that price tends to snap back toward its average after moving too far, too fast. Traders often use the RSI (Relative Strength Index) to flag when a stock looks "overbought" or "oversold."</p>
+    </div>
+    <div class="strat">
+      <div>
+        <h4>Candlestick confirmation</h4>
+        <span class="strat-meta">TOOLS: MODULE 03 PATTERNS</span>
+      </div>
+      <p>Rather than a standalone strategy, this is a filter layered onto the others — e.g. only taking a breakout trade if it closes as a marubozu, or only trusting a support bounce if it prints a hammer.</p>
+    </div>
+  </div>
+
+  <div class="risk-box">
+    <span class="tag">Non-negotiable</span>
+    <h3 style="font-size:17px; margin-bottom:8px;">Risk management outranks the strategy</h3>
+    <p style="color:var(--ink-soft); font-size:14.5px; margin:0;">Every strategy above will lose some percentage of the time — that's normal, not a sign you did it wrong. What separates a sustainable trader from a blown-up account is deciding your stop-loss and position size <em>before</em> you enter, not after the trade has already moved against you.</p>
+  </div>
+</section>
+
+<!-- ================= MODULE 05 — QUIZ ================= -->
+<section class="module" id="test">
+  <div class="module-head">
+    <span class="module-num">05</span>
+    <div>
+      <h2>Closing Bell — Test Yourself</h2>
+      <p class="module-sub">Five quick checks. Click an answer to see if it's right.</p>
+    </div>
+  </div>
+
+  <div id="quizContainer"></div>
+  <p class="quiz-score" id="quizScore">Score: 0 / 5</p>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <h3>Open Bell</h3>
+    <p style="color:#B7BEB2; font-size:14px; max-width:60ch;">A self-contained introduction to how stocks, orders, candlesticks, and strategy fit together. Built as a starting point — every module here has years of further depth behind it.</p>
+    <p class="disclaimer">This course is for general education only and is not financial, investment, or trading advice. Nothing here is a recommendation to buy or sell any security. Trading involves real risk of loss, including loss of principal. Past patterns, including candlestick formations, do not guarantee future results. Consider speaking with a licensed financial advisor before making investment decisions, and never risk money you can't afford to lose.</p>
+  </div>
+</footer>
+
+<script>
+  // ---- Hero candlestick illustration ----
+  const heroData = [
+    {h:60,b:24,w:'bull',o:2}, {h:40,b:34,w:'bear',o:0}, {h:70,b:14,w:'bull',o:8},
+    {h:36,b:44,w:'bull',o:0}, {h:52,b:10,w:'bear',o:6}, {h:80,b:20,w:'bull',o:0},
+    {h:30,b:30,w:'bear',o:2}, {h:64,b:16,w:'bull',o:10}, {h:44,b:38,w:'bull',o:0},
+    {h:20,b:60,w:'bull',o:0}, {h:56,b:12,w:'bear',o:4}, {h:36,b:46,w:'bull',o:0}
+  ];
+  const heroRow = document.getElementById('heroCandles');
+  heroData.forEach(c=>{
+    const stack = document.createElement('div');
+    stack.className = 'candle-stack';
+    stack.style.marginBottom = c.o + 'px';
+    stack.innerHTML = `
+      <div class="wick" style="height:${Math.round(c.h*0.28)}px"></div>
+      <div class="body ${c.w}" style="height:${c.b}px"></div>
+      <div class="wick" style="height:${Math.round(c.h*0.2)}px"></div>
+    `;
+    heroRow.appendChild(stack);
+  });
+
+  // ---- Nav active state on scroll ----
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section.module');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        navLinks.forEach(l=>l.classList.remove('active'));
+        const match = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if(match) match.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  sections.forEach(s=>observer.observe(s));
+
+  // ---- Pattern filter tabs ----
+  const tabs = document.querySelectorAll('.tab');
+  const patternCards = document.querySelectorAll('.pattern-card');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      tabs.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      patternCards.forEach(card=>{
+        card.hidden = !(filter === 'all' || card.dataset.type === filter);
+      });
+    });
+  });
+
+  // ---- Quiz ----
+  const quizData = [
+    {
+      q: "A candle has a small body near the bottom with a long upper wick and almost no lower wick. What is it?",
+      opts: ["Hammer", "Shooting Star", "Doji", "Marubozu"],
+      correct: 1,
+      note: "Long upper wick, small body at the bottom — sellers rejected higher prices. That's a shooting star."
+    },
+    {
+      q: "You place an order guaranteeing the exact price but not that it fills right away. What type is it?",
+      opts: ["Market order", "Limit order", "Stop-loss", "Short sale"],
+      correct: 1,
+      note: "A limit order fills only at your specified price or better — you trade certainty of fill for certainty of price."
+    },
+    {
+      q: "The gap between the best bid and best ask in the order book is called the:",
+      opts: ["Margin", "Spread", "Slippage", "Premium"],
+      correct: 1,
+      note: "That's the spread — the built-in cost of trading in that moment."
+    },
+    {
+      q: "A small red candle followed by a larger green candle that fully covers its body is a:",
+      opts: ["Bearish Engulfing", "Evening Star", "Bullish Engulfing", "Three Black Crows"],
+      correct: 2,
+      note: "Bullish engulfing — buyers erased the prior decline in a single period."
+    },
+    {
+      q: "What should you decide before entering a trade, not after?",
+      opts: ["Which broker to use", "Your stop-loss and position size", "The stock's all-time high", "The company's logo"],
+      correct: 1,
+      note: "Deciding your exit and size in advance is what keeps one losing trade from becoming a catastrophic one."
+    }
+  ];
+
+  const quizContainer = document.getElementById('quizContainer');
+  const scoreEl = document.getElementById('quizScore');
+  let score = 0;
+  let answered = new Set();
+
+  quizData.forEach((item, qi)=>{
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    const optsHtml = item.opts.map((opt,oi)=>`<button class="quiz-opt" data-q="${qi}" data-o="${oi}">${opt}</button>`).join('');
+    card.innerHTML = `
+      <div class="quiz-q">${qi+1}. ${item.q}</div>
+      <div class="quiz-opts">${optsHtml}</div>
+      <div class="quiz-feedback" id="fb-${qi}"></div>
+    `;
+    quizContainer.appendChild(card);
+  });
+
+  quizContainer.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.quiz-opt');
+    if(!btn) return;
+    const qi = Number(btn.dataset.q);
+    if(answered.has(qi)) return;
+    answered.add(qi);
+
+    const item = quizData[qi];
+    const oi = Number(btn.dataset.o);
+    const allBtns = document.querySelectorAll(`.quiz-opt[data-q="${qi}"]`);
+    allBtns.forEach(b=>{
+      const bo = Number(b.dataset.o);
+      if(bo === item.correct) b.classList.add('correct');
+      else if(bo === oi) b.classList.add('incorrect');
+    });
+
+    if(oi === item.correct) score++;
+    const fb = document.getElementById(`fb-${qi}`);
+    fb.textContent = item.note;
+    fb.classList.add('show');
+    scoreEl.textContent = `Score: ${score} / ${quizData.length}`;
+  });
+</script>
+
+</body>
+</html>
